@@ -20,7 +20,7 @@ top_frame = Frame(
     root,
     bg = '#446324',
     width = util.width_prct(100),
-    height = util.height_prct(20)
+    height = util.height_prct(15)
 )
 # Places the frame in the adequate location.
 top_frame.place(x = 0, y = 0)
@@ -30,10 +30,10 @@ left_frame = Frame(
     root,
     bg = '#293d14',
     width = util.width_prct(20),
-    height = util.height_prct(80)
+    height = util.height_prct(85)
 )
 # Places it on the left side of the page.
-left_frame.place(x = 0, y = util.height_prct(20))
+left_frame.place(x = 0, y = util.height_prct(15))
 
 # Creation of the frame that will hold the game.
 center_frame = Frame(
@@ -45,17 +45,20 @@ center_frame = Frame(
 # Places it accordingly
 center_frame.place(
     x=util.width_prct(20),
-    y=util.height_prct(20)
+    y=util.height_prct(15)
 )
 
+
 for x in range(settings.GRID_SIZE):
-    for y in range(settings.GRID_SIZE):
-        c = Cell()
+    for y in range(settings.GRID_SIZE-2):
+        c = Cell(x, y)
         c.create_btn_obj(center_frame)
         c.cell_btn_obj.grid(
             column=x,
             row=y
         )
+
+Cell.randomize_mines()
 
 # Ends the loop of the GUI.
 mainloop()
