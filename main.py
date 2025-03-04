@@ -58,6 +58,13 @@ for x in range(settings.GRID_SIZE):
             row=y
         )
 
+# Call the label from the Cell class
+Cell.create_cell_count_label(top_frame)
+Cell.cell_count_label_obj.place(
+    x = util.width_prct(40),
+    y = util.height_prct(4)
+)
+
 Cell.randomize_mines()
 
 # Ends the loop of the GUI.

@@ -1,4 +1,4 @@
-from tkinter import Button
+from tkinter import Button, Label
 import settings
 import random
 
@@ -6,9 +6,14 @@ import random
 class Cell:
     # List of actions
     all = []
+    # Global label for number of cells left.
+    cell_count_label_obj = None
+    # Creates the number of flags.
+    num_flags = settings.MINES_COUNT
     # Defines the constructor to set values.
     def __init__(self, x, y,  is_mine=False):
         self.is_mine = is_mine
+        self.is_open = False
         self.cell_btn_obj = None
         self.x = x
         self.y = y
@@ -29,12 +34,28 @@ class Cell:
         btn.bind('<Button-1>', self.left_click_actions)
         btn.bind('<Button-3>', self.right_click_actions)
         self.cell_btn_obj = btn
+    
+    # Creates the label for number of cells left
+    @staticmethod
+    def create_cell_count_label(location):
+        lbl = Label(
+            location,
+            bg="#446324",
+            fg="white",
+            text=f"Flags Left: {Cell.num_flags}",
+            font=("", 20)
+        )
+        Cell.cell_count_label_obj = lbl
 
     # The function that runs when left clicked. Takes 2 parameters.
     def left_click_actions(self, event):
         if self.is_mine:
             self.show_mine()
         else:
+            # If 0, it checks all cells around it
+            if self.num_surrounding_mines == 0:
+                for cell_obj in self.surrounded_cells:
+                    cell_obj.show_cell()
             self.show_cell()
 
     # Return a cell object based on the values of x and y.
@@ -83,6 +104,8 @@ class Cell:
         else:
             color = {1:"green", 2:"blue", 3:"red", 4:"orange"}.get(mines_count,"black")
             self.cell_btn_obj.configure(text=mines_count, fg=color, font=bnt_font)
+        # Sets the cell to be "selected"
+        self.is_open = True
 
     # Shows the mine once it is selected.
     def show_mine(self):
@@ -91,8 +114,13 @@ class Cell:
 
     # The function that runs when right clicked. Takes 2 parameters.
     def right_click_actions(self, event):
-        print(event)
-        print("I am RIGHT clicked!")
+        if not self.is_open:
+            Cell.num_flags -= 1
+            if Cell.cell_count_label_obj:
+                Cell.cell_count_label_obj.configure(text=f"Flags Left: {Cell.num_flags}")
+                self.cell_btn_obj.configure(text="FLAG", fg="black", font=("Arial", 9, "bold"))
+            print(event)
+            print(f"I am RIGHT clicked! {Cell.num_flags}")
 
     # Randomly establishes cells to be mines.
     @staticmethod
