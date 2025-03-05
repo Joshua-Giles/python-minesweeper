@@ -25,6 +25,18 @@ top_frame = Frame(
 # Places the frame in the adequate location.
 top_frame.place(x = 0, y = 0)
 
+game_title = Label(
+    top_frame,
+    bg="#446324",
+    fg="white",
+    text="Minesweeper",
+    font=('small fonts', 38, 'bold')
+)
+game_title.place(
+    x=util.width_prct(7),
+    y=util.height_prct(1.5)
+)
+
 # Creating a frame to save best times.
 left_frame = Frame(
     root,
@@ -34,6 +46,32 @@ left_frame = Frame(
 )
 # Places it on the left side of the page.
 left_frame.place(x = 0, y = util.height_prct(15))
+
+# Label for the leaderboard on the side of the game.
+scoreboard = Label(
+    left_frame,
+    bg="#293d14",
+    fg="white",
+    text="LEADERBOARD",
+    font=('small fonts', 13, 'bold')
+)
+scoreboard.place(
+    x=util.width_prct(1.2),
+    y=util.height_prct(5)
+)
+
+# Label for all entries in the leaderboard.
+entries = Label(
+    left_frame,
+    bg="#293d14",
+    fg="white",
+    text="GGY: 5.00\n\n\nJAG: 10.00\n\n\nAGH: 11.00\n\n\nRAG: 12.00\n\n\nTRC: 13.00\n\n\nDAG: 14.00",
+    font=('small fonts', 11, 'bold')
+)
+entries.place(
+    x=util.width_prct(4),
+    y=util.height_prct(17)
+)
 
 # Creation of the frame that will hold the game.
 center_frame = Frame(
@@ -61,11 +99,9 @@ for x in range(settings.GRID_SIZE):
 # Call the label from the Cell class
 Cell.create_cell_count_label(top_frame)
 Cell.cell_count_label_obj.place(
-    x = util.width_prct(40),
-    y = util.height_prct(4)
+    x = util.width_prct(60),
+    y = util.height_prct(5.5)
 )
-
-Cell.randomize_mines()
 
 # Ends the loop of the GUI.
 mainloop()
