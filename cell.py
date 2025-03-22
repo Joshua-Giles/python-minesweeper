@@ -1,4 +1,5 @@
 from tkinter import Button, Label
+from timer import Timer
 import settings
 import random
 import ctypes
@@ -17,6 +18,8 @@ class Cell:
     cell_count = settings.CELL_COUNT
     # Flag to check for first click
     first_click = True
+    # Variable to check if the game is over
+    game_over = False
     # Defines the constructor to set values.
     def __init__(self, x, y,  is_mine=False):
         self.is_mine = is_mine
@@ -33,8 +36,8 @@ class Cell:
     def create_btn_obj(self, location):
         btn = Button(
             location,
-            width=8,
-            height=3,
+            width=12,
+            height=5,
             bg=self.bg_color
         )
         # Creating an event for the button. "<Button-1>" = left click.
@@ -58,6 +61,8 @@ class Cell:
     def left_click_actions(self, event):
         # On the first click, randomize mines safely.
         if Cell.first_click:
+            if hasattr(Cell, 'timer') and Cell.timer:
+                Cell.timer.start()
             # Creates a safe zone.
             safe_zone = [self] + self.surrounded_cells
             # All cells in the safe zone are candidates for mines.
@@ -76,13 +81,22 @@ class Cell:
         else:
             if not self.is_open:
                 self.show_cell()
+                # Force updates the GUI so color changes immediately
+                self.cell_btn_obj.update_idletasks()
                 # If 0, it checks all cells around it
                 if self.num_surrounding_mines == 0:
                     for cell_obj in self.surrounded_cells:
                         if not cell_obj.is_open:
                             cell_obj.left_click_actions(None)
                 # If 10 cells left, player won
-                if Cell.cell_count == Cell.num_mines:
+                if Cell.cell_count == Cell.num_mines and not Cell.game_over:
+                    if hasattr(Cell, 'timer') and Cell.timer:
+                        Cell.timer.stop()
+                    for cell in Cell.all:
+                        cell.cell_btn_obj.unbind('<Button-1>')
+                        cell.cell_btn_obj.unbind('<Button-3>')
+                        cell.cell_btn_obj.configure(state='disabled')
+                    Cell.game_over = True
                     ctypes.windll.user32.MessageBoxW(0, 'Congradulations, you won!', 'Game Over', 0)
 
         # Cancel left and right click events if cell is already opened
@@ -145,15 +159,27 @@ class Cell:
         if not self.is_mine_candidate:
             # Sets the cell to red
             self.cell_btn_obj.configure(bg='#db2121')
+            # Force updates the GUI so color changes immediately
+            self.cell_btn_obj.update_idletasks()
+            # Loop through all cells
             for cell in Cell.all:
                 cell.cell_btn_obj.unbind('<Button-1>')
                 cell.cell_btn_obj.unbind('<Button-3>')
                 if cell.is_mine:
                     cell.cell_btn_obj.configure(bg='#db2121')
                 cell.cell_btn_obj.configure(state='disabled')
+            if hasattr(Cell, 'timer') and Cell.timer:
+                Cell.timer.stop()
             # A logic to interrupt the game and display losing message.
             # First 0 is required. First message is body. Second message is header. Second 0 is "Ok"
             ctypes.windll.user32.MessageBoxW(0, 'You clicked on a mine', 'Game Over', 0)
+
+            # Placeholder for reset functionality
+            #result = ctypes.windll.user32.MessageBoxW(0, 'Do you want to retry?', 'Retry', 4)
+            #if result == 6:
+            #    print("Woohoo")
+            #else:
+            #    print("No")
 
     # The function that runs when right clicked. Takes 2 parameters.
     def right_click_actions(self, event):

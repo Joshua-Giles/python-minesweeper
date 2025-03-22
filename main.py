@@ -1,5 +1,6 @@
 from tkinter import *
 from cell import Cell
+from timer import Timer
 import settings
 import util
 
@@ -18,7 +19,7 @@ root.resizable(False, False)
 # Creation of the header frame.
 top_frame = Frame(
     root,
-    bg = '#446324',
+    bg="#446324",
     width = util.width_prct(100),
     height = util.height_prct(15)
 )
@@ -33,9 +34,24 @@ game_title = Label(
     font=('small fonts', 38, 'bold')
 )
 game_title.place(
-    x=util.width_prct(7),
+    x=util.width_prct(2),
     y=util.height_prct(1.5)
 )
+
+timer_label = Label(
+    top_frame,
+    bg="#446324",
+    fg="white",
+    text="0",
+    font=('small fonts', 23, 'bold')
+)   
+timer_label.place(
+    x=util.width_prct(80),
+    y=util.height_prct(5)
+)
+
+game_timer = Timer(timer_label)
+Cell.timer = game_timer
 
 # Creating a frame to save best times.
 left_frame = Frame(
@@ -65,7 +81,7 @@ entries = Label(
     left_frame,
     bg="#293d14",
     fg="white",
-    text="GGY: 5.00\n\n\nJAG: 10.00\n\n\nAGH: 11.00\n\n\nRAG: 12.00\n\n\nTRC: 13.00\n\n\nDAG: 14.00",
+    text="GGY: 5.00\n\n\nJAG: 10.00\n\n\nAGH: 11.00\n\n\nRAG: 12.00\n\n\nTRC: 13.00\n\n\nDAG: 14.00\n\n\nJAM: 60.00",
     font=('small fonts', 11, 'bold')
 )
 entries.place(
@@ -86,7 +102,6 @@ center_frame.place(
     y=util.height_prct(15)
 )
 
-
 for x in range(settings.GRID_SIZE):
     for y in range(settings.GRID_SIZE-2):
         c = Cell(x, y)
@@ -99,7 +114,7 @@ for x in range(settings.GRID_SIZE):
 # Call the label from the Cell class
 Cell.create_cell_count_label(top_frame)
 Cell.cell_count_label_obj.place(
-    x = util.width_prct(60),
+    x = util.width_prct(48),
     y = util.height_prct(5.5)
 )
 
